@@ -72,13 +72,13 @@ variable "tgw_asn" {
 }
 
 variable "tgw_pri_gre_ip" {
-  description = "ASN of TGW"
-  type        = number
+  description = "AWS TGW side gre IP for primary."
+  type        = string
 }
 
 variable "tgw_ha_gre_ip" {
-  description = "ASN of TGW"
-  type        = number
+  description = "AWS TGW side gre IP for ha."
+  type        = string
 }
 
 variable "tunnel_cidr" {
