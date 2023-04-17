@@ -3,11 +3,6 @@ variable "transit_vpc_name" {
   type        = string
 }
 
-variable "transit_vpc_name" {
-  description = "VPC Name of Transit Gateway"
-  type        = string
-}
-
 variable "transit_vpc_id" {
   description = "VPC ID of Transit Gateway"
   type        = string
