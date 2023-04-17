@@ -1,19 +1,5 @@
-variable "prefix" {
-  description = "Prefix the resources created."
-  type        = string
-}
-
-variable "vpc_attachment_id" {
-  description = "ID of VPC attachment for Aviatrix Transit"
-  type        = string
-}
-
-variable "tgw_route_table_id" {
-  description = "ID of TGW route table."
-  type        = string
-}
-variable "transit_gw_name" {
-  description = "Name of Transit Gateway"
+variable "transit_vpc_name" {
+  description = "VPC Name of Transit Gateway"
   type        = string
 }
 
@@ -30,6 +16,39 @@ variable "transit_vpc_id" {
 variable "transit_vpc_cidr" {
   description = "VPC cidr of Transit Gateway"
   type        = string
+}
+
+variable "transit_vpc_subnets" {
+  description = "Subnet names from aviatrix_vpc resource."
+  type = list(string)
+}
+
+variable "transit_gw_name" {
+  description = "Name of Transit Gateway"
+  type        = string
+}
+
+variable "network_domain_name" {
+  description = "Name of Network Domain."
+  type        = string
+  default = null
+}
+
+variable "vpc_attachment_id" {
+  description = "ID of VPC attachment for Aviatrix Transit"
+  type        = string
+}
+
+variable "association_route_table_id" {
+  description = "Associate this Connect to this route table id."
+  type        = string
+  default     = null
+}
+
+variable "propagation_route_table_id" {
+  description = "Propagate this Connect CIDR to this route table id, if different than the association."
+  type        = string
+  default     = null
 }
 
 variable "transit_pri_ip" {
@@ -62,6 +81,16 @@ variable "tgw_asn" {
   type        = number
 }
 
+variable "tgw_pri_gre_ip" {
+  description = "ASN of TGW"
+  type        = number
+}
+
+variable "tgw_ha_gre_ip" {
+  description = "ASN of TGW"
+  type        = number
+}
+
 variable "tunnel_cidr" {
   description = "CIDR for inside tunnel"
   type        = string
@@ -72,11 +101,8 @@ variable "tunnel_cidr" {
   }
 }
 
-variable "security_domain" {
-  description = "Aviatrix security domain"
-  type        = string
-}
-
 locals {
+  attachment_tags = { Name = var.network_domain_name == null ? "${var.transit_gw_name}-avx-gw-attachment" : "${var.transit_gw_name}-${var.network_domain_name}-avx-gw-attachment" }
+  
   tunnel_cidrs = cidrsubnets(var.tunnel_cidr, 2, 2, 2, 2)
 }

@@ -4,26 +4,28 @@ resource "aws_ec2_transit_gateway_connect" "this" {
   transit_gateway_default_route_table_association = false
   transit_gateway_default_route_table_propagation = false
 
-  tags = {
-    Name = "${var.prefix}-avx-connect"
-  }
+  tags = local.attachment_tags
 }
 
 resource "aws_ec2_transit_gateway_route_table_association" "avx_connect" {
   transit_gateway_attachment_id  = aws_ec2_transit_gateway_connect.this.id
-  transit_gateway_route_table_id = var.tgw_route_table_id
+  transit_gateway_route_table_id = var.association_route_table_id
+
+  tags = local.attachment_tags
 }
 
 resource "aws_ec2_transit_gateway_route_table_propagation" "avx_connect" {
   transit_gateway_attachment_id  = aws_ec2_transit_gateway_connect.this.id
-  transit_gateway_route_table_id = var.tgw_route_table_id
+  transit_gateway_route_table_id = coalesce(var.propagation_route_table_id, var.association_route_table_id)
+
+  tags = local.attachment_tags
 }
 
 # Create TGW Connect Peers and Aviatrix GRE tunnel.
 resource "aws_ec2_transit_gateway_connect_peer" "primary" {
   peer_address = var.transit_pri_ip
   bgp_asn      = var.avx_asn
-  #transit_gateway_address       = cidrhost(data.aws_ec2_transit_gateway.this.transit_gateway_cidr_blocks[0], 1)
+  transit_gateway_address       = var.tgw_pri_gre_ip
   inside_cidr_blocks            = [local.tunnel_cidrs[0]]
   transit_gateway_attachment_id = aws_ec2_transit_gateway_connect.this.id
 }
@@ -31,7 +33,7 @@ resource "aws_ec2_transit_gateway_connect_peer" "primary" {
 resource "aws_ec2_transit_gateway_connect_peer" "ha" {
   peer_address = var.transit_ha_ip
   bgp_asn      = var.avx_asn
-  #transit_gateway_address       = cidrhost(data.aws_ec2_transit_gateway.this.transit_gateway_cidr_blocks[0], 2)
+  transit_gateway_address       = var.tgw_ha_gre_ip
   inside_cidr_blocks            = [local.tunnel_cidrs[1]]
   transit_gateway_attachment_id = aws_ec2_transit_gateway_connect.this.id
   depends_on = [
@@ -58,10 +60,12 @@ resource "aviatrix_transit_external_device_conn" "avx_to_tgw" {
   backup_remote_tunnel_cidr = "${cidrhost(local.tunnel_cidrs[3], 2)}/29, ${cidrhost(local.tunnel_cidrs[1], 2)}/29"
   backup_bgp_remote_as_num  = var.tgw_asn
 
-  manual_bgp_advertised_cidrs = ["10.0.0.0/8"]
+  manual_bgp_advertised_cidrs = ["10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16"]
 }
 
 resource "aviatrix_segmentation_network_domain_association" "this" {
-  network_domain_name = var.security_domain
+  count = var.network_domain_name == null ? 0 : 1
+
+  network_domain_name = var.network_domain_name
   attachment_name     = aviatrix_transit_external_device_conn.avx_to_tgw.connection_name
 }
