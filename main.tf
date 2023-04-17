@@ -1,5 +1,5 @@
 resource "aws_ec2_transit_gateway_connect" "this" {
-  transport_attachment_id                         = var.vpc_attachment_id
+  transport_attachment_id                         = var.transit_vpc_attachment_id
   transit_gateway_id                              = var.tgw_id
   transit_gateway_default_route_table_association = false
   transit_gateway_default_route_table_propagation = false
