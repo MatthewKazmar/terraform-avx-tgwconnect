@@ -66,11 +66,6 @@ variable "tgw_id" {
   type        = string
 }
 
-variable "tgw_cidr" {
-  description = "ID of the TGW"
-  type        = string
-}
-
 variable "tgw_asn" {
   description = "ASN of TGW"
   type        = number
