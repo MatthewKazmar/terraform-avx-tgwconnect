@@ -20,7 +20,7 @@ variable "transit_vpc_cidr" {
 
 variable "transit_vpc_subnets" {
   description = "Subnet names from aviatrix_vpc resource."
-  type = list(string)
+  type        = list(string)
 }
 
 variable "transit_gw_name" {
@@ -31,10 +31,10 @@ variable "transit_gw_name" {
 variable "network_domain_name" {
   description = "Name of Network Domain."
   type        = string
-  default = null
+  default     = null
 }
 
-variable "vpc_attachment_id" {
+variable "transit_vpc_attachment_id" {
   description = "ID of VPC attachment for Aviatrix Transit"
   type        = string
 }
@@ -103,6 +103,6 @@ variable "tunnel_cidr" {
 
 locals {
   attachment_tags = { Name = var.network_domain_name == null ? "${var.transit_gw_name}-avx-gw-attachment" : "${var.transit_gw_name}-${var.network_domain_name}-avx-gw-attachment" }
-  
+
   tunnel_cidrs = cidrsubnets(var.tunnel_cidr, 2, 2, 2, 2)
 }

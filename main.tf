@@ -23,16 +23,16 @@ resource "aws_ec2_transit_gateway_route_table_propagation" "avx_connect" {
 
 # Create TGW Connect Peers and Aviatrix GRE tunnel.
 resource "aws_ec2_transit_gateway_connect_peer" "primary" {
-  peer_address = var.transit_pri_ip
-  bgp_asn      = var.avx_asn
+  peer_address                  = var.transit_pri_ip
+  bgp_asn                       = var.avx_asn
   transit_gateway_address       = var.tgw_pri_gre_ip
   inside_cidr_blocks            = [local.tunnel_cidrs[0]]
   transit_gateway_attachment_id = aws_ec2_transit_gateway_connect.this.id
 }
 
 resource "aws_ec2_transit_gateway_connect_peer" "ha" {
-  peer_address = var.transit_ha_ip
-  bgp_asn      = var.avx_asn
+  peer_address                  = var.transit_ha_ip
+  bgp_asn                       = var.avx_asn
   transit_gateway_address       = var.tgw_ha_gre_ip
   inside_cidr_blocks            = [local.tunnel_cidrs[1]]
   transit_gateway_attachment_id = aws_ec2_transit_gateway_connect.this.id
