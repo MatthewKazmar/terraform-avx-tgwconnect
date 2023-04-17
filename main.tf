@@ -10,15 +10,11 @@ resource "aws_ec2_transit_gateway_connect" "this" {
 resource "aws_ec2_transit_gateway_route_table_association" "avx_connect" {
   transit_gateway_attachment_id  = aws_ec2_transit_gateway_connect.this.id
   transit_gateway_route_table_id = var.association_route_table_id
-
-  tags = local.attachment_tags
 }
 
 resource "aws_ec2_transit_gateway_route_table_propagation" "avx_connect" {
   transit_gateway_attachment_id  = aws_ec2_transit_gateway_connect.this.id
   transit_gateway_route_table_id = coalesce(var.propagation_route_table_id, var.association_route_table_id)
-
-  tags = local.attachment_tags
 }
 
 # Create TGW Connect Peers and Aviatrix GRE tunnel.

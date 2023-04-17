@@ -93,6 +93,7 @@ variable "tunnel_cidr" {
 
 locals {
   attachment_tags = { Name = var.network_domain_name == null ? "${var.transit_gw_name}-avx-gw-attachment" : "${var.transit_gw_name}-${var.network_domain_name}-avx-gw-attachment" }
+  s2c_connection_name = var.network_domain_name == null ? "${var.transit_gw_name}-to-tgw" : "${var.transit_gw_name}-${var.network_domain_name}-to-tgw"
 
   tunnel_cidrs = cidrsubnets(var.tunnel_cidr, 2, 2, 2, 2)
 }
