@@ -39,7 +39,7 @@ resource "aws_ec2_transit_gateway_connect_peer" "ha" {
 
 resource "aviatrix_transit_external_device_conn" "avx_to_tgw" {
   vpc_id            = var.transit_vpc_id
-  connection_name   = "${var.prefix}-avx-to-tgw"
+  connection_name   = local.s2c_connection_name
   gw_name           = var.transit_gw_name
   connection_type   = "bgp"
   tunnel_protocol   = "GRE"
